@@ -14,5 +14,11 @@ interface EmployeeDao {
     @Query("SELECT * FROM Employee WHERE employeeNo=:filter")
     suspend fun getEmployees(filter: Int): List<Employee>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertImage(image: ImageEntity)
+
+    @Query("SELECT * FROM images ORDER BY id ASC")
+    fun getAllImages(): Flow<List<ImageEntity>>
+
 }
 

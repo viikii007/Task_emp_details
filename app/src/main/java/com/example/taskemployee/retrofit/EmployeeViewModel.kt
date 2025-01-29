@@ -6,8 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.taskemployee.room.Employee
+import com.example.taskemployee.room.ImageEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,6 +19,17 @@ class EmployeeViewModel(private val repository: EmployeeRepository) : ViewModel(
     var isLoading by mutableStateOf(false)
     private val _employees = MutableStateFlow<List<Employee>>(emptyList())
     val employees: StateFlow<List<Employee>> = _employees
+
+
+    val allImages = repository.allImages.asLiveData()
+
+    fun addImage(uri: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val timestamp = System.currentTimeMillis()
+            repository.addImage(ImageEntity(uri = uri, timestamp = timestamp))
+        }
+    }
+
 
     fun fetchEmployees() {
         isLoading = true
